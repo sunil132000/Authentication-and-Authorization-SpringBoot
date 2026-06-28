@@ -1,10 +1,13 @@
 package com.example.security.config;
 
+import com.example.security.enums.Permissions;
+import com.example.security.enums.ROLES;
 import com.example.security.filter.JwtAuthFilter;
 import com.example.security.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,7 +34,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth-> auth.antMatchers("/authenticate").permitAll()
-                        .antMatchers("/employee/getEmployee").hasRole("ADMIN").anyRequest().authenticated());
+                        //below is role based authorization
+                        .antMatchers(HttpMethod.GET ,"/employee/getEmployee").hasRole(String.valueOf(ROLES.ADMIN))
+                        //below three are access based authorization
+                        .antMatchers(HttpMethod.GET ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_READ))
+                        .antMatchers(HttpMethod.POST ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_WRITE))
+                        .antMatchers(HttpMethod.DELETE ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_DELETE))
+                        .anyRequest().authenticated());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
