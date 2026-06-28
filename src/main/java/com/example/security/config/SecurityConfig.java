@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,6 +26,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -35,11 +37,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth-> auth.antMatchers("/authenticate").permitAll()
                         //below is role based authorization
-                        .antMatchers(HttpMethod.GET ,"/employee/getEmployee").hasRole(String.valueOf(ROLES.ADMIN))
+                        //.antMatchers(HttpMethod.GET ,"/employee/getEmployee").hasRole(String.valueOf(ROLES.ADMIN))
                         //below three are access based authorization
-                        .antMatchers(HttpMethod.GET ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_READ))
-                        .antMatchers(HttpMethod.POST ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_WRITE))
-                        .antMatchers(HttpMethod.DELETE ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_DELETE))
+                        //.antMatchers(HttpMethod.GET ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_READ))
+                        //.antMatchers(HttpMethod.POST ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_WRITE))
+                        //.antMatchers(HttpMethod.DELETE ,"/employee/getEmployee").hasAuthority(String.valueOf(Permissions.EMPLOYEE_DELETE))
                         .anyRequest().authenticated());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
