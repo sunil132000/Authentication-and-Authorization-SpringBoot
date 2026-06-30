@@ -30,7 +30,7 @@ public class AdminUserInitilzer {
             if (userRepository.findByUsername("user").isEmpty()) {
 
                 Users admin = new Users();
-                admin.setUsername("admin");
+                admin.setUsername("user");
                 admin.setPassword(passwordEncoder.encode("user1234"));
                 admin.setRole(ROLES.USER);
 
